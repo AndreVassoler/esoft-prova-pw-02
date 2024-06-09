@@ -1,109 +1,123 @@
-const url = "http://servicodados.ibge.gov.br/api/v3/noticias"
+// Variavel para a URL da API
+const url = "https://servicodados.ibge.gov.br/api/v3/noticias";
 
-const filter = document.querySelector("container-filter")
-const dialog = document.querySelector(".modal-filtro");
-const dialogFechar = document.querySelector(".botao-fechar");
-const dialogAplicar = document.querySelector(".botao-aplica-filtro");
+// Variáveis para os elementos do filtro
+const filtro = document.querySelector(".icone-filtro  ");
+const dialog = document.querySelector(".dialog-filtro");
+const dialogFechar = document.querySelector(".dialog-filtro-fechar");
+const dialogAplicar = document.querySelector(".dialog-filtro-aplicar");
 
+// Eventos para abrir, fechar e aplicar o dialog de filtro
 dialogAplicar.addEventListener("click", () => {
-    atualizarFilter();
-    dialog.close();
+  atualizarFiltros();
+  dialog.close();
 });
 
-filter.addEventListener("click", () => {
-    dialog.showModal();
+filtro.addEventListener("click", () => {
+  dialog.showModal();
 });
 
 dialogFechar.addEventListener("click", () => {
-    dialog.close();
+  dialog.close();
 });
 
-const formDeBusca = document.querySelector(".form-pesquisa");
-const inputDeBusca = document.querySelector("input");
-let  busca = inputDeBusca.value || "";
+// Variáveis para o campo de busca
+const formBusca = document.querySelector(".form-busca");
+const inputBusca = formBusca.querySelector("input");
+let busca = inputBusca.value || "";
 
-formDeBusca.addEventListener("submit", (event) => {
-    event.preventDefault();
-    pagina = 1;
-    busca = inputDeBusca.value;
+// Evento para buscar as notícias quando o formulário de busca é submetido
+// Também é feito a atualização da url
+formBusca.addEventListener("submit", (event) => {
+  event.preventDefault();
 
-    atualizaUrl();
-    buscaNoticia();
+  paginaAtual = 1;
+  busca = inputBusca.value;
+
+  atualizarUrl();
+  buscarNoticias();
 });
 
+// Váriaveis para os campos de filtro
 let tipo = document.querySelector("#tipo");
 let qtd = document.querySelector("#quantidade");
 let de = document.querySelector("#de");
 let ate = document.querySelector("#ate");
 
-const ListaNoticia = document.querySelector(".lista-noticia");
+// Variavel que armazena a UL que irá conter as notícias
+const listaNoticias = document.querySelector(".lista-noticias");
 
-const listaPagina = document.querySelector(".lista-pagina");
+// Variavel para a lista de paginas
+const listaPaginacao = document.querySelector(".lista-paginacao");
 let paginaAtual = 1;
-let totalPagina = 1;
+let totalPaginas = 1;
 
+// Função para criar o elemento da notícia LI
 function criarNoticia(noticia) {
-    const li = document.createElement("li");
-    const imagem = document.createElement("img");
-    const imagemContainer = JSON.parse(noticia.imagens);
+  const li = document.createElement("li");
 
-    imagem.src = `https://agenciadenoticias.ibge.gov.br/${imagemObj.image_intro}`;
+  const imagem = document.createElement("img");
+  const imagemObj = JSON.parse(noticia.imagens);
+  imagem.src = `https://agenciadenoticias.ibge.gov.br/${imagemObj.image_intro}`;
 
-    const titulo = document.createElement("h2");
-    titulo.textContent = noticia.titulo;
+  const titulo = document.createElement("h2");
+  titulo.textContent = noticia.titulo;
 
-    const intro = document.createElement("p");
-    intro.textContent = noticia.introtext;
+  const intro = document.createElement("p");
+  intro.textContent = noticia.introducao;
 
-    const editores = document.createElement("span");
-    editores.textContent = noticia.editores ? noticia.editores.split(";").masp((editores) => `#${editores}`).join(" ") : "";
+  const editorias = document.createElement("span");
+  editorias.textContent = noticia.editorias
+    ? noticia.editorias
+        .split(";")
+        .map((editoria) => `#${editoria}`)
+        .join(" ")
+    : "";
 
-    const publicado = document.createElement("span");
-    publicado.textContent = calcularDataPublicado(noticia.data_publicacao);
+  const publicado = document.createElement("span");
+  publicado.textContent = calcularDataPublicacao(noticia.data_publicacao);
 
-    const botaoLeiaMais = document.createElement("button");
-    botaoLeiaMais.textContent = "Leia mais";
-    botaoLeiaMais.addEventListener("click", () => {
-        window.open(noticia.url, "_blank");
-    });
+  const botaoLeiaMais = document.createElement("button");
+  botaoLeiaMais.textContent = "Leia mais";
+  botaoLeiaMais.addEventListener("click", () => {
+    window.open(noticia.link, "_blank");
+  });
 
+  // Criar a estrutura da notícia
+  const divNoticia = document.createElement("div");
+  divNoticia.classList.add("noticia");
 
-    
+  const divNoticiaConteudo = document.createElement("div");
+  divNoticiaConteudo.classList.add("noticia-conteudo");
 
-  const noticia = document.createElement("div");
-  noticia.classList.add("noticia");
+  const divNoticiaImagem = document.createElement("div");
+  divNoticiaImagem.classList.add("noticia-imagem");
 
-  const noticiaConteudo = document.createElement("div");
-  noticiaConteudo.classList.add("noticia-conteudo");
+  const divConteudoInfo = document.createElement("div");
+  divConteudoInfo.classList.add("conteudo-info");
 
-  const noticiaImagem = document.createElement("div");
-  noticiaImagem.classList.add("noticia-imagem");
+  const divConteudoPublicado = document.createElement("div");
+  divConteudoPublicado.classList.add("conteudo-publicado");
 
-  const conteudoInformacao = document.createElement("div");
-  conteudoInformacao.classList.add("conteudo-info");
+  const divLeiaMais = document.createElement("div");
+  divLeiaMais.classList.add("leia-mais");
 
-  const conteudoPublicado = document.createElement("div");
-  conteudoPublicado.classList.add("conteudo-publicado");
+  divConteudoInfo.appendChild(titulo);
+  divConteudoInfo.appendChild(intro);
+  divConteudoPublicado.appendChild(editorias);
+  divConteudoPublicado.appendChild(publicado);
+  divLeiaMais.appendChild(botaoLeiaMais);
 
-  const leiaMais = document.createElement("div");
-  leiaMais.classList.add("leia-mais");
+  divNoticiaConteudo.appendChild(divConteudoInfo);
+  divNoticiaConteudo.appendChild(divConteudoPublicado);
+  divNoticiaConteudo.appendChild(divLeiaMais);
 
-  conteudoInformacao.appendChild(titulo);
-  conteudoInformacao.appendChild(intro);
-  conteudoPublicado.appendChild(editores);
-  conteudoPublicado.appendChild(publicado);
-  leiaMais.appendChild(botaoLeiaMais);
+  divNoticiaImagem.appendChild(imagem);
 
-  noticiaConteudo.appendChild(conteudoInformacao);
-  noticiaConteudo.appendChild(conteudoPublicado);
-  noticiaConteudo.appendChild(leiaMais);
+  divNoticia.appendChild(divNoticiaImagem);
+  divNoticia.appendChild(divNoticiaConteudo);
 
-  noticiaImagem.appendChild(imagem);
-
-  noticia.appendChild(noticiaImagem);
-  noticia.appendChild(noticiaConteudo);
-
-  li.appendChild(noticia);
+  li.appendChild(divNoticia);
 
   return li;
 }
@@ -197,11 +211,8 @@ function buscarNoticias() {
 }
 
 // Função para paginar as notícias e criar os botões de paginação
-/**
- * Função responsável por paginar as notícias.
- */
 function paginarNoticias() {
-  listaPagina.innerHTML = "";
+  listaPaginacao.innerHTML = "";
 
   const paginas = [];
 
@@ -243,7 +254,7 @@ function paginarNoticias() {
   });
 
   primeiraPagina.appendChild(botaoPrimeiraPagina);
-  listaPagina.appendChild(primeiraPagina);
+  listaPaginacao.appendChild(primeiraPagina);
 
   // Botão para página anterior
   const paginaAnterior = document.createElement("li");
@@ -256,7 +267,7 @@ function paginarNoticias() {
   });
 
   paginaAnterior.appendChild(botaoPaginaAnterior);
-  listaPagina.appendChild(paginaAnterior);
+  listaPaginacao.appendChild(paginaAnterior);
 
   // Paginas que ficam visiveis
   paginasVisiveis.forEach((pagina) => {
@@ -273,7 +284,7 @@ function paginarNoticias() {
       botao.style.color = "#ffffff";
     }
     li.appendChild(botao);
-    listaPagina.appendChild(li);
+    listaPaginacao.appendChild(li);
   });
 
   // Botão para próxima página
@@ -287,7 +298,7 @@ function paginarNoticias() {
   });
 
   proximaPagina.appendChild(botaoProximaPagina);
-  listaPagina.appendChild(proximaPagina);
+  listaPaginacao.appendChild(proximaPagina);
 
   // Botão para última página
   const ultimaPagina = document.createElement("li");
@@ -300,13 +311,34 @@ function paginarNoticias() {
   });
 
   ultimaPagina.appendChild(botaoUltimaPagina);
-  listaPagina.appendChild(ultimaPagina);
+  listaPaginacao.appendChild(ultimaPagina);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  const filtroCount = document.querySelector(".icone-filtro-contador");
+  const tipoSelect = document.getElementById("tipo");
+  const quantidadeSelect = document.getElementById("quantidade");
+  const deInput = document.getElementById("de");
+  const ateInput = document.getElementById("ate");
+  const form = document.querySelector(".dialog-filtro-form");
 
+  function updateFiltroCount() {
+    let count = 0;
 
+    if (tipoSelect.value !== "") count++;
+    if (quantidadeSelect.value !== "0" && quantidadeSelect.value !== "")
+      count++;
+    if (deInput.value) count++;
+    if (ateInput.value) count++;
 
+    filtroCount.textContent = count;
+  }
 
+  form.addEventListener("change", updateFiltroCount);
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    updateFiltroCount();
+  });
 
-
-
+  updateFiltroCount();
+});
