@@ -4,8 +4,8 @@ const url = "https://servicodados.ibge.gov.br/api/v3/noticias";
 // Variáveis para os elementos do filtro
 const filtro = document.querySelector(".icone-filtro  ");
 const dialog = document.querySelector(".dialog-filtro");
-const dialogFechar = document.querySelector(".dialog-filtro-fechar");
-const dialogAplicar = document.querySelector(".dialog-filtro-aplicar");
+const dialogFechar = document.querySelector(".fechar-filtro");
+const dialogAplicar = document.querySelector(".aplicar-filtro");
 
 // Eventos para abrir, fechar e aplicar o dialog de filtro
 dialogAplicar.addEventListener("click", () => {
@@ -45,10 +45,10 @@ let de = document.querySelector("#de");
 let ate = document.querySelector("#ate");
 
 // Variavel que armazena a UL que irá conter as notícias
-const listaNoticias = document.querySelector(".lista-noticias");
+const listaNoticias = document.querySelector(".lista-noticia");
 
 // Variavel para a lista de paginas
-const listaPaginacao = document.querySelector(".lista-paginacao");
+const listaPaginacao = document.querySelector(".lista-pagina");
 let paginaAtual = 1;
 let totalPaginas = 1;
 
@@ -63,8 +63,8 @@ function criarNoticia(noticia) {
   const titulo = document.createElement("h2");
   titulo.textContent = noticia.titulo;
 
-  const intro = document.createElement("p");
-  intro.textContent = noticia.introducao;
+  const introducao = document.createElement("p");
+  introducao.textContent = noticia.introducao;
 
   const editorias = document.createElement("span");
   editorias.textContent = noticia.editorias
@@ -74,12 +74,12 @@ function criarNoticia(noticia) {
         .join(" ")
     : "";
 
-  const publicado = document.createElement("span");
-  publicado.textContent = calcularDataPublicacao(noticia.data_publicacao);
+  const publicacao = document.createElement("span");
+  publicacao.textContent = calcularDataPublicacao(noticia.data_publicacao);
 
-  const botaoLeiaMais = document.createElement("button");
-  botaoLeiaMais.textContent = "Leia mais";
-  botaoLeiaMais.addEventListener("click", () => {
+  const botaoLerMais = document.createElement("button");
+  botaoLerMais.textContent = "Ler Mais";
+  botaoLerMais.addEventListener("click", () => {
     window.open(noticia.link, "_blank");
   });
 
@@ -90,8 +90,8 @@ function criarNoticia(noticia) {
   const divNoticiaConteudo = document.createElement("div");
   divNoticiaConteudo.classList.add("noticia-conteudo");
 
-  const divNoticiaImagem = document.createElement("div");
-  divNoticiaImagem.classList.add("noticia-imagem");
+  const divNoticiaImg = document.createElement("div");
+  divNoticiaImg.classList.add("noticia-imagem");
 
   const divConteudoInfo = document.createElement("div");
   divConteudoInfo.classList.add("conteudo-info");
@@ -103,18 +103,18 @@ function criarNoticia(noticia) {
   divLeiaMais.classList.add("leia-mais");
 
   divConteudoInfo.appendChild(titulo);
-  divConteudoInfo.appendChild(intro);
+  divConteudoInfo.appendChild(introducao);
   divConteudoPublicado.appendChild(editorias);
-  divConteudoPublicado.appendChild(publicado);
-  divLeiaMais.appendChild(botaoLeiaMais);
+  divConteudoPublicado.appendChild(publicacao);
+  divLeiaMais.appendChild(botaoLerMais);
 
   divNoticiaConteudo.appendChild(divConteudoInfo);
   divNoticiaConteudo.appendChild(divConteudoPublicado);
   divNoticiaConteudo.appendChild(divLeiaMais);
 
-  divNoticiaImagem.appendChild(imagem);
+  divNoticiaImg.appendChild(imagem);
 
-  divNoticia.appendChild(divNoticiaImagem);
+  divNoticia.appendChild(divNoticiaImg);
   divNoticia.appendChild(divNoticiaConteudo);
 
   li.appendChild(divNoticia);
@@ -320,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const quantidadeSelect = document.getElementById("quantidade");
   const deInput = document.getElementById("de");
   const ateInput = document.getElementById("ate");
-  const form = document.querySelector(".dialog-filtro-form");
+  const form = document.querySelector(".filtro-formulario");
 
   function updateFiltroCount() {
     let count = 0;
