@@ -1,13 +1,10 @@
-// Variavel para a URL da API
 const url = "https://servicodados.ibge.gov.br/api/v3/noticias";
 
-// Variáveis para os elementos do filtro
 const filtro = document.querySelector(".icone-filtro  ");
 const dialog = document.querySelector(".dialog-filtro");
 const dialogFechar = document.querySelector(".fechar-filtro");
 const dialogAplicar = document.querySelector(".aplicar-filtro");
 
-// Eventos para abrir, fechar e aplicar o dialog de filtro
 dialogAplicar.addEventListener("click", () => {
   atualizarFiltros();
   dialog.close();
@@ -21,13 +18,11 @@ dialogFechar.addEventListener("click", () => {
   dialog.close();
 });
 
-// Variáveis para o campo de busca
 const formBusca = document.querySelector(".form-busca");
 const inputBusca = formBusca.querySelector("input");
 let busca = inputBusca.value || "";
 
-// Evento para buscar as notícias quando o formulário de busca é submetido
-// Também é feito a atualização da url
+
 formBusca.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -38,21 +33,17 @@ formBusca.addEventListener("submit", (event) => {
   buscarNoticias();
 });
 
-// Váriaveis para os campos de filtro
 let tipo = document.querySelector("#tipo");
 let qtd = document.querySelector("#quantidade");
 let de = document.querySelector("#de");
 let ate = document.querySelector("#ate");
 
-// Variavel que armazena a UL que irá conter as notícias
 const listaNoticias = document.querySelector(".lista-noticia");
 
-// Variavel para a lista de paginas
 const listaPaginacao = document.querySelector(".lista-pagina");
 let paginaAtual = 1;
 let totalPaginas = 1;
 
-// Função para criar o elemento da notícia LI
 function criarNoticia(noticia) {
   const li = document.createElement("li");
 
@@ -83,7 +74,6 @@ function criarNoticia(noticia) {
     window.open(noticia.link, "_blank");
   });
 
-  // Criar a estrutura da notícia
   const divNoticia = document.createElement("div");
   divNoticia.classList.add("noticia");
 
@@ -142,8 +132,7 @@ function calcularDataPublicacao(data) {
   }
 }
 
-// Função para atualizar as variáveis de filtro quando o dialog é aplicado
-// Também é feito a busca das notícias e a atualização da url
+
 function atualizarFiltros() {
   tipo = document.querySelector("#tipo");
   qtd = document.querySelector("#quantidade");
@@ -155,7 +144,6 @@ function atualizarFiltros() {
   atualizarUrl();
 }
 
-// Atualizar url com os filtros
 function atualizarUrl() {
   const params = new URLSearchParams();
 
@@ -169,7 +157,6 @@ function atualizarUrl() {
   window.history.pushState({}, "", `?${params}`);
 }
 
-// Atualizar as variáveis de filtro quando a página é carregada pela primeira vez e tiver dados na url
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
 
@@ -187,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
   buscarNoticias();
 });
 
-// Função para buscar as notícias da API do IBGE
 function buscarNoticias() {
   const params = new URLSearchParams();
 
@@ -210,7 +196,6 @@ function buscarNoticias() {
     });
 }
 
-// Função para paginar as notícias e criar os botões de paginação
 function paginarNoticias() {
   listaPaginacao.innerHTML = "";
 
@@ -243,7 +228,6 @@ function paginarNoticias() {
     }
   }
 
-  // Botão para primeira página
   const primeiraPagina = document.createElement("li");
   const botaoPrimeiraPagina = document.createElement("button");
   botaoPrimeiraPagina.textContent = "<<";
@@ -269,7 +253,6 @@ function paginarNoticias() {
   paginaAnterior.appendChild(botaoPaginaAnterior);
   listaPaginacao.appendChild(paginaAnterior);
 
-  // Paginas que ficam visiveis
   paginasVisiveis.forEach((pagina) => {
     const li = document.createElement("li");
     const botao = document.createElement("button");
@@ -287,7 +270,6 @@ function paginarNoticias() {
     listaPaginacao.appendChild(li);
   });
 
-  // Botão para próxima página
   const proximaPagina = document.createElement("li");
   const botaoProximaPagina = document.createElement("button");
   botaoProximaPagina.textContent = ">";
@@ -300,7 +282,6 @@ function paginarNoticias() {
   proximaPagina.appendChild(botaoProximaPagina);
   listaPaginacao.appendChild(proximaPagina);
 
-  // Botão para última página
   const ultimaPagina = document.createElement("li");
   const botaoUltimaPagina = document.createElement("button");
   botaoUltimaPagina.textContent = ">>";
